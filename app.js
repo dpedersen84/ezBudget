@@ -1,14 +1,34 @@
 // BUDGET CONTROLLER
 const budgetController = (() => {
 
+    class Expense {
+        constructor(id, description, value) {
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        }
+    };
 
+    class Income {
+        constructor(id, description, value) {
+            this.id = id;
+            this.description = description;
+            this.value = value;
+        }
+    };
 
-
-
+    let data = {
+        allItems: {
+            exp: [],
+            inc: [],
+        },
+        totals: {
+            exp: 0,
+            inc: 0,
+        }
+    }
 
 })();
-
-
 
 // UI CONTROLLER
 const uiController = (() => {
@@ -39,12 +59,23 @@ const uiController = (() => {
     
 })();
 
-
-
 // GLOBAL APP CONTROLLER
 const controller = ((budgetCtrl, uiCtrl) => {
 
-    let DOM = uiCtrl.getDOMStrings();
+    let setupEventListeners = () => {
+
+        let DOM = uiCtrl.getDOMStrings();
+        
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
+
+        document.addEventListener('keypress', (event) => {
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            } 
+        });
+    };
+
+    
 
     let ctrlAddItem = () => {
 
@@ -59,14 +90,14 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         // 5. Display budget
 
+    };
+
+    return {
+        init: () => {
+            console.log('You may begin adding to your budget. >8]');
+            setupEventListeners();
+        }
     }
-
-    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
-
-    document.addEventListener('keypress', (event) => {
-        if (event.keyCode === 13 || event.which === 13) {
-            ctrlAddItem();
-        } 
-    })
-
 })(budgetController, uiController);
+
+controller.init();
