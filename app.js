@@ -55,6 +55,7 @@ const budgetController = (() => {
             return newItem;
         },
 
+        // View the data within console
         testing: () => {
             console.log(data)
         }
@@ -79,7 +80,7 @@ const uiController = (() => {
             return {
                 type: document.querySelector(domStrings.inputType).value, // either inc or exp
                 description: document.querySelector(domStrings.inputDescription).value,
-                value: document.querySelector(domStrings.inputValue).value,
+                value: parseFloat(document.querySelector(domStrings.inputValue).value), // Convert the value to a number
             };
         },
 
@@ -160,20 +161,30 @@ const controller = ((budgetCtrl, uiCtrl) => {
         // 1. Get the field input data
         input = uiCtrl.getInput();
 
-        // 2. Add the item to budget controller
-        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        // Add the item only if the fields contain a description, a number, and a number greater than 0
+        if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+            // 2. Add the item to budget controller
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
-        // 3. Add the new item to UI
-        uiCtrl.addListItem(newItem, input.type);
+            // 3. Add the new item to UI
+            uiCtrl.addListItem(newItem, input.type);
 
-        // 4. Clear the fields
-        uiCtrl.clearFields();
+            // 4. Clear the fields
+            uiCtrl.clearFields();
 
-        // 5. Calculate budget
-
-        // 6. Display budget
-
+            // 5. Calculate and update budget
+            updateBudget();
+        ;}
     };
+
+    let updateBudget = () => {
+
+        // 1. Calculate budget
+
+        // 2. Return the budget
+
+        // 3. Display budget on the UI
+    }
 
     return {
         init: () => {
