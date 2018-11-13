@@ -17,6 +17,15 @@ const budgetController = (() => {
         }
     };
 
+    const calculateTotal = (type) => {
+        let sum = 0;
+
+        data.allItems[type].forEach((item) => {
+            sum += item.value;
+        });
+        data.totals[type] = sum;
+    }
+
     // Object to hold all of the data in the budget
     let data = {
         allItems: {
@@ -26,7 +35,9 @@ const budgetController = (() => {
         totals: {
             exp: 0,
             inc: 0,
-        }
+        },
+        budget: 0,
+        percentage: -1 // set to -1 because it is nonexistent at the beginning
     };
 
     return {
@@ -53,6 +64,33 @@ const budgetController = (() => {
 
             // Return new item
             return newItem;
+        },
+
+        calculateBudget: () => {
+
+            // 1. Calculate total income and expense
+            calculateTotal('exp');
+            calculateTotal('inc');
+
+            // 2. Calculate the budget: income - expenses
+            data.budget = data.totals.inc - data.totals.exp;
+
+            // 3. Calculate the percentage of income spent
+            if(data.totals.inc > 0) {
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100); 
+            } else {
+                data.percentage = -1;
+            }
+            
+        },
+
+        getBudget: () => {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.inc,
+                totalExpenses: data.totals.exp,
+                percentage: data.percentage
+            };
         },
 
         // View the data within console
@@ -177,13 +215,16 @@ const controller = ((budgetCtrl, uiCtrl) => {
         ;}
     };
 
-    let updateBudget = () => {
+    const updateBudget = () => {
 
         // 1. Calculate budget
+        budgetCtrl.calculateBudget();
 
         // 2. Return the budget
+        let budget = budgetCtrl.getBudget();
 
         // 3. Display budget on the UI
+        console.log(budget);
     }
 
     return {
@@ -194,4 +235,5 @@ const controller = ((budgetCtrl, uiCtrl) => {
     }
 })(budgetController, uiController);
 
+// Start the application
 controller.init();
