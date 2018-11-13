@@ -17,6 +17,7 @@ const budgetController = (() => {
         }
     };
 
+    // Object to hold all of the data in the budget
     let data = {
         allItems: {
             exp: [],
@@ -111,6 +112,23 @@ const uiController = (() => {
 
         },
 
+        clearFields: () => {
+            let fields, fieldsArr;
+
+            fields = document.querySelectorAll(domStrings.inputDescription + ', ' + domStrings.inputValue); // document.querySelectorAll('.add__description, .add__value')
+
+            // Convert list returned from querySelectorAll method to an array
+            fieldsArr = Array.prototype.slice.call(fields);
+
+            // Clear each of the input fields
+            fieldsArr.forEach((input) => {
+                input.value = '';
+            });
+
+            // Put cursor back into the first input field
+            fieldsArr[0].focus();
+        },
+
         getDOMStrings: () => {
             return domStrings;
         },
@@ -148,9 +166,12 @@ const controller = ((budgetCtrl, uiCtrl) => {
         // 3. Add the new item to UI
         uiCtrl.addListItem(newItem, input.type);
 
-        // 4. Calculate budget
+        // 4. Clear the fields
+        uiCtrl.clearFields();
 
-        // 5. Display budget
+        // 5. Calculate budget
+
+        // 6. Display budget
 
     };
 
