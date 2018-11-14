@@ -172,6 +172,11 @@ const uiController = (() => {
 
         },
 
+        deleteListItem: (id) => {
+            let el = document.getElementById(id);
+            el.parentNode.removeChild(el);
+        },
+
         clearFields: () => {
             let fields, fieldsArr;
 
@@ -264,7 +269,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
     const ctrlDeleteItem = (event) => {
         let itemID;
 
-        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (itemID) {
 
@@ -278,9 +283,12 @@ const controller = ((budgetCtrl, uiCtrl) => {
             budgetCtrl.deleteItem(type, ID);
 
             // 2. Delete the item from the UI
+            uiCtrl.deleteListItem(itemID)
 
             // 3. Update and show the new budget
-        }
+            updateBudget();
+        };
+
     };
 
     return {
