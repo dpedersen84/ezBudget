@@ -41,6 +41,7 @@ const budgetController = (() => {
     };
 
     return {
+
         addItem: (type, des, val) => {
 
             let newItem, id;
@@ -111,6 +112,10 @@ const uiController = (() => {
         inputBtn: '.add__btn',
         incomeContainer: '.income__list',
         expenseContainer: '.expenses__list',
+        budgetLabel: '.budget__value',
+        incomeLabel: '.budget__income--value',
+        expenseLabel: '.budget__expenses--value',
+        percentageLabel: '.budget__expenses--percentage',
     }
 
     return {
@@ -166,6 +171,18 @@ const uiController = (() => {
 
             // Put cursor back into the first input field
             fieldsArr[0].focus();
+        },
+
+        displayBudget: (obj) => {
+            document.querySelector(domStrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(domStrings.incomeLabel).textContent = obj.totalIncome;
+            document.querySelector(domStrings.expenseLabel).textContent = obj.totalExpenses;
+
+            if (obj.percentage > 0) {
+                document.querySelector(domStrings.percentageLabel).textContent = obj.percentage + '%';
+            } else {
+                document.querySelector(domStrings.percentageLabel).textContent = '----';
+            }
         },
 
         getDOMStrings: () => {
@@ -224,12 +241,21 @@ const controller = ((budgetCtrl, uiCtrl) => {
         let budget = budgetCtrl.getBudget();
 
         // 3. Display budget on the UI
+        uiCtrl.displayBudget(budget);
         console.log(budget);
     }
 
     return {
         init: () => {
             console.log('You may begin adding to your budget. >8]');
+            
+            // Clears the display on app load
+            uiCtrl.displayBudget({
+                budget: 0,
+                totalIncome: 0,
+                totalExpenses: 0,
+                percentage: -1
+            });
             setupEventListeners();
         }
     }
