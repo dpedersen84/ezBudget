@@ -6,8 +6,24 @@ const budgetController = (() => {
             this.id = id;
             this.description = description;
             this.value = value;
+            this.percentage = -1;
         }
+
+        calcPercentage(totalIncome) {
+
+            if (totalIncome > 0) {
+                this.percentage = Math.round((this.value / totalIncome) * 100);
+            } else {
+                this.percentage = -1;
+            }
+        };
+        
+        getPercentage() {
+            return this.percentage;
+        };
     };
+
+    
 
     class Income {
         constructor(id, description, value) {
@@ -98,6 +114,20 @@ const budgetController = (() => {
                 data.percentage = -1;
             }
             
+        },
+
+        calculatePercentages: () => {
+            data.allItems.exp.forEach((item) => {
+                item.calcPercentage(data.totals.inc);
+            })
+
+        },
+
+        getPercentages: () => {
+            let allPercentages = data.allItems.exp.map((item) => {
+                return item.getPercentage();
+            });
+            return allPercentages;
         },
 
         getBudget: () => {
@@ -250,6 +280,9 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
             // 5. Calculate and update budget
             updateBudget();
+
+            // 6. Calculate and update percentages
+            updatePercentages();
         ;}
     };
 
@@ -263,8 +296,20 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         // 3. Display budget on the UI
         uiCtrl.displayBudget(budget);
-        console.log(budget);
+        // console.log(budget);
     };
+
+    const updatePercentages = () => {
+
+        // 1. Calculate percentages
+        budgetCtrl.calculatePercentages();
+
+        // 2. Read percentages from budget controller
+        let percentages = budgetCtrl.getPercentages();
+
+        // 3. Update UI
+        console.log(percentages);
+    };  
 
     const ctrlDeleteItem = (event) => {
         let itemID;
@@ -287,13 +332,16 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
             // 3. Update and show the new budget
             updateBudget();
+
+            // 4. Calculate and update percentages
+            updatePercentages();
         };
 
     };
 
     return {
         init: () => {
-            console.log('You may begin adding to your budget. >8]');
+            console.log('You may begin adding to your budget.');
             
             // Clears the display on app load
             uiCtrl.displayBudget({
