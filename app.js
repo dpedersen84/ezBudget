@@ -162,6 +162,7 @@ const uiController = (() => {
         expenseLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
+        expensesPercentageLabel: '.item__percentage'
     }
 
     return {
@@ -236,6 +237,31 @@ const uiController = (() => {
             }
         },
 
+        displayPercentages: (percentages) => {
+            let percentageFields;
+            
+            percentageFields = document.querySelectorAll(domStrings.expensesPercentageLabel);
+
+            // console.log(percentageFields);
+
+            // Nodelist is returned
+            // forEach() cannot be used on a Nodelist
+            const nodeListForEach = (list, callback) => {
+                for (var i = 0; i < list.length; i++) {
+                    callback(list[i], i);
+                }
+            }
+
+            nodeListForEach(percentageFields, (item, index) => {
+                if (percentages[index] > 0) {
+                    item.textContent = percentages[index] + '%';
+                } else {
+                    current.textContent = '---';
+                }
+                
+            })
+        },
+
         getDOMStrings: () => {
             return domStrings;
         },
@@ -308,7 +334,8 @@ const controller = ((budgetCtrl, uiCtrl) => {
         let percentages = budgetCtrl.getPercentages();
 
         // 3. Update UI
-        console.log(percentages);
+        uiCtrl.displayPercentages(percentages);
+        // console.log(percentages);
     };  
 
     const ctrlDeleteItem = (event) => {
