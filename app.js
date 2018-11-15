@@ -163,7 +163,29 @@ const uiController = (() => {
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
         expensesPercentageLabel: '.item__percentage'
-    }
+    };
+
+    
+    const formatNumber = (num, type) => {
+        let numSplit, int, dec;
+
+        num = Math.abs(num);
+        num = num.toFixed(2);
+
+        numSplit = num.split('.');
+
+        int = numSplit[0];
+        dec = numSplit[1];
+
+        if (int.length > 3) {
+            int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3); //input 2310, output 2,310
+        }
+
+        dec = numSplit[1];
+
+        return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
+
+    };
 
     return {
         getInput: () => {
@@ -196,7 +218,7 @@ const uiController = (() => {
             // Replace placeholder text with actual data
             newHTML = html.replace('%id%', obj.id);
             newHTML = newHTML.replace('%description%', obj.description);
-            newHTML = newHTML.replace('%value%', obj.value);
+            newHTML = newHTML.replace('%value%', formatNumber(obj.value, type));
 
             // Insert HTML into DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHTML);
@@ -226,9 +248,14 @@ const uiController = (() => {
         },
 
         displayBudget: (obj) => {
-            document.querySelector(domStrings.budgetLabel).textContent = obj.budget;
-            document.querySelector(domStrings.incomeLabel).textContent = obj.totalIncome;
-            document.querySelector(domStrings.expenseLabel).textContent = obj.totalExpenses;
+            
+            let type;
+
+            obj.budget > 0 ? type = 'inc' : type = 'exp';
+
+            document.querySelector(domStrings.budgetLabel).textContent = formatNumber(obj.budget, type );
+            document.querySelector(domStrings.incomeLabel).textContent = formatNumber(obj.totalIncome, 'inc');
+            document.querySelector(domStrings.expenseLabel).textContent = formatNumber(obj.totalExpenses, 'exp');
 
             if (obj.percentage > 0) {
                 document.querySelector(domStrings.percentageLabel).textContent = obj.percentage + '%';
@@ -256,7 +283,7 @@ const uiController = (() => {
                 if (percentages[index] > 0) {
                     item.textContent = percentages[index] + '%';
                 } else {
-                    current.textContent = '---';
+                    item.textContent = '---';
                 }
                 
             })
