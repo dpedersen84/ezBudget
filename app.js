@@ -1,29 +1,23 @@
 // BUDGET CONTROLLER
 const budgetController = (() => {
-
     class Expense {
         constructor(id, description, value) {
             this.id = id;
             this.description = description;
             this.value = value;
             this.percentage = -1;
-        }
-
+        };
         calcPercentage(totalIncome) {
-
             if (totalIncome > 0) {
                 this.percentage = Math.round((this.value / totalIncome) * 100);
             } else {
                 this.percentage = -1;
             }
         };
-        
         getPercentage() {
             return this.percentage;
         };
     };
-
-    
 
     class Income {
         constructor(id, description, value) {
@@ -35,12 +29,11 @@ const budgetController = (() => {
 
     const calculateTotal = (type) => {
         let sum = 0;
-
         data.allItems[type].forEach((item) => {
             sum += item.value;
         });
         data.totals[type] = sum;
-    }
+    };
 
     // Object to hold all of the data in the budget
     let data = {
@@ -57,28 +50,23 @@ const budgetController = (() => {
     };
 
     return {
-
+        
         addItem: (type, des, val) => {
-
             let newItem, id;
-
             // Create new ID
             if (data.allItems[type].length > 0) {
                 id = data.allItems[type][data.allItems[type].length - 1].id + 1;
             } else {
                 id = 0;
             }
-
             // Create new item based on 'inc' or 'exp' type
             if (type === 'exp') {
                 newItem = new Expense(id, des, val);
             } else if (type === 'inc') {
                 newItem = new Income(id, des, val);
             }
-            
             // Push into data structure
             data.allItems[type].push(newItem);
-
             // Return new item
             return newItem;
         },
@@ -162,10 +150,10 @@ const uiController = (() => {
         expenseLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
-        expensesPercentageLabel: '.item__percentage'
+        expensesPercentageLabel: '.item__percentage',
+        dateLabel: '.budget__title--month'
     };
 
-    
     const formatNumber = (num, type) => {
         let numSplit, int, dec;
 
@@ -231,6 +219,7 @@ const uiController = (() => {
         },
 
         clearFields: () => {
+
             let fields, fieldsArr;
 
             fields = document.querySelectorAll(domStrings.inputDescription + ', ' + domStrings.inputValue); // document.querySelectorAll('.add__description, .add__value')
@@ -265,6 +254,7 @@ const uiController = (() => {
         },
 
         displayPercentages: (percentages) => {
+
             let percentageFields;
             
             percentageFields = document.querySelectorAll(domStrings.expensesPercentageLabel);
@@ -287,6 +277,18 @@ const uiController = (() => {
                 }
                 
             })
+        },
+
+        displayMonth: () => {
+            let now, year, months, month;
+
+            months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            now = new Date();
+            month = now.getMonth();
+            year = now.getFullYear();
+
+            document.querySelector(domStrings.dateLabel).textContent = months[month] + ' ' + year;
         },
 
         getDOMStrings: () => {
@@ -322,6 +324,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         // Add the item only if the fields contain a description, a number, and a number greater than 0
         if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+
             // 2. Add the item to budget controller
             newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
@@ -336,7 +339,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
             // 6. Calculate and update percentages
             updatePercentages();
-        ;}
+        };
     };
 
     const updateBudget = () => {
@@ -366,6 +369,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
     };  
 
     const ctrlDeleteItem = (event) => {
+
         let itemID;
 
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
@@ -390,13 +394,12 @@ const controller = ((budgetCtrl, uiCtrl) => {
             // 4. Calculate and update percentages
             updatePercentages();
         };
-
     };
 
     return {
         init: () => {
             console.log('You may begin adding to your budget.');
-            
+            uiCtrl.displayMonth();
             // Clears the display on app load
             uiCtrl.displayBudget({
                 budget: 0,
@@ -406,7 +409,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
             });
             setupEventListeners();
         }
-    }
+    };
 })(budgetController, uiController);
 
 // Start the application
