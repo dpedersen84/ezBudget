@@ -35,7 +35,6 @@ const budgetController = (() => {
         data.totals[type] = sum;
     };
 
-    // Object to hold all of the data in the budget
     let data = {
         allItems: {
             exp: [],
@@ -50,7 +49,6 @@ const budgetController = (() => {
     };
 
     return {
-
         addItem: (type, des, val) => {
             let newItem, id;
             // Create new ID
@@ -127,7 +125,6 @@ const budgetController = (() => {
             };
         },
 
-        // View the data within console
         testing: () => {
             console.log(data)
         }
@@ -179,7 +176,7 @@ const uiController = (() => {
         for (var i = 0; i < list.length; i++) {
             callback(list[i], i);
         }
-    }
+    };
 
     return {
         getInput: () => {
@@ -306,7 +303,7 @@ const uiController = (() => {
 
         getDOMStrings: () => {
             return domStrings;
-        },
+        }
     };
 })();
 
