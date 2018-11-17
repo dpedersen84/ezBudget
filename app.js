@@ -50,7 +50,7 @@ const budgetController = (() => {
     };
 
     return {
-        
+
         addItem: (type, des, val) => {
             let newItem, id;
             // Create new ID
@@ -175,6 +175,12 @@ const uiController = (() => {
 
     };
 
+    const nodeListForEach = (list, callback) => {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    }
+
     return {
         getInput: () => {
             return {
@@ -237,12 +243,11 @@ const uiController = (() => {
         },
 
         displayBudget: (obj) => {
-            
             let type;
 
             obj.budget > 0 ? type = 'inc' : type = 'exp';
 
-            document.querySelector(domStrings.budgetLabel).textContent = formatNumber(obj.budget, type );
+            document.querySelector(domStrings.budgetLabel).textContent = formatNumber(obj.budget, type);
             document.querySelector(domStrings.incomeLabel).textContent = formatNumber(obj.totalIncome, 'inc');
             document.querySelector(domStrings.expenseLabel).textContent = formatNumber(obj.totalExpenses, 'exp');
 
@@ -254,20 +259,12 @@ const uiController = (() => {
         },
 
         displayPercentages: (percentages) => {
-
             let percentageFields;
             
             percentageFields = document.querySelectorAll(domStrings.expensesPercentageLabel);
 
-            // console.log(percentageFields);
-
-            // Nodelist is returned
+            // Nodelist is returned from querySelectorAll method
             // forEach() cannot be used on a Nodelist
-            const nodeListForEach = (list, callback) => {
-                for (var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            }
 
             nodeListForEach(percentageFields, (item, index) => {
                 if (percentages[index] > 0) {
@@ -289,6 +286,22 @@ const uiController = (() => {
             year = now.getFullYear();
 
             document.querySelector(domStrings.dateLabel).textContent = months[month] + ' ' + year;
+        },
+
+        changedType: () => {
+            let fields;
+            
+            fields = document.querySelectorAll(
+                domStrings.inputType + ',' + 
+                domStrings.inputDescription + ',' +
+                domStrings.inputValue
+            );
+
+            nodeListForEach(fields, (field) => {
+                field.classList.toggle('red-focus');
+            });
+
+            document.querySelector(domStrings.inputBtn).classList.toggle('red');
         },
 
         getDOMStrings: () => {
@@ -313,6 +326,9 @@ const controller = ((budgetCtrl, uiCtrl) => {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', uiCtrl.changedType);
+
     };
 
     const ctrlAddItem = () => {
